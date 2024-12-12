@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,11 @@ public class CustomerController {
     
     private CustomerService customerService;
     
+    @PutMapping("{customerId}")
+    public ResponseEntity updateCustomer(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer){
+        customerService.updateCustomer(customerId, customer);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
     
     
     @PostMapping
@@ -42,8 +48,8 @@ public class CustomerController {
         return customerService.listCustomers();
     }
     
-    @GetMapping("{id}")
-    public Customer getCustomerById(@PathVariable("id") UUID id){
-        return customerService.getCustomer(id);
+    @GetMapping("{customerId}")
+    public Customer getCustomerById(@PathVariable("customerId") UUID customerId){
+        return customerService.getCustomer(customerId);
     }
 }
