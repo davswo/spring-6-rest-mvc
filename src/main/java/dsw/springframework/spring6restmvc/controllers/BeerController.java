@@ -23,7 +23,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping()
-    public List<Beer> listBeers() {
+    public List<Beer> listAllBeers() {
         return beerService.listBeers();
     }
     

@@ -22,13 +22,13 @@ public class CustomerController {
     private CustomerService customerService;
     
     @GetMapping
-    public List<Customer> listCustomers(){
+    public List<Customer> listAllCustomers(){
         log.info("Getting customers");
         return customerService.listCustomers();
     }
     
     @GetMapping("{id}")
-    public Customer getCustomer(@PathVariable("id") UUID id){
+    public Customer getCustomerById(@PathVariable("id") UUID id){
         return customerService.getCustomer(id);
     }
 }
