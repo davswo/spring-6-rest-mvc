@@ -64,7 +64,7 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public List<Beer> listBeers() {
-        return List.copyOf(beerMap.values());
+        return beerMap.values().stream().toList();
     }
     
     @Override
