@@ -17,19 +17,20 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 @RestController
+@RequestMapping("/api/v1/beer")
 public class BeerController {
     
     private final BeerService beerService;
 
-    @GetMapping("/api/v1/beer/{id}")
+    @GetMapping()
+    public List<Beer> listBeers() {
+        return beerService.listBeers();
+    }
+    
+    @GetMapping("{id}")
     public Beer getBeerById(@PathVariable("id") UUID id){
         log.debug("Get Beer by Id - in controller");
         return beerService.getBeerById(id);
-    }
-    
-    @GetMapping("/api/v1/beer")
-    public List<Beer> listBeers() {
-        return beerService.listBeers(); 
     }
 
 }
