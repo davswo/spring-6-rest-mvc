@@ -1,8 +1,6 @@
 package dsw.springframework.spring6restmvc.services;
 
 import dsw.springframework.spring6restmvc.model.Customer;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,6 +43,19 @@ public class CustomerServiceImpl implements CustomerService {
         customers.put(customer1.getId(), customer1);
         customers.put(customer2.getId(), customer2);
         customers.put(customer3.getId(), customer3);
+    }
+    
+    @Override
+    public Customer saveNewCustomer(Customer customer) {
+        Customer newCustomer = Customer.builder()
+                .customerName(customer.getCustomerName())
+                .id(UUID.randomUUID())
+                .version(1)
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+        customers.put(newCustomer.getId(), newCustomer);
+        return newCustomer;
     }
     
     @Override
