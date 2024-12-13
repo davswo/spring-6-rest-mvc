@@ -10,6 +10,8 @@ public interface CustomerService {
 
     void updateCustomer(UUID id, Customer customer);
 
+    void patchCustomer(UUID id, Customer customer);
+
     Customer getCustomer(UUID id);
 
     List<Customer> listCustomers();

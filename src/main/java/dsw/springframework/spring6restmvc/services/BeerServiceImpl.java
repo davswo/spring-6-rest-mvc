@@ -103,6 +103,32 @@ public class BeerServiceImpl implements BeerService {
     }
     
     @Override
+    public void patchBeerById(UUID beerId, Beer beer) {
+        Beer existingBeer = beerMap.get(beerId);
+        if (existingBeer == null) {
+            return;
+        }
+        if (beer.getBeerName() != null) {
+            existingBeer.setBeerName(beer.getBeerName());
+        }
+        if (beer.getBeerStyle() != null) {
+            existingBeer.setBeerStyle(beer.getBeerStyle());
+        }
+        if (beer.getUpc() != null) {
+            existingBeer.setUpc(beer.getUpc());
+        }
+        if (beer.getPrice() != null) {
+            existingBeer.setPrice(beer.getPrice());
+        }
+        if (beer.getQuantityOnHand() != null) {
+            existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
+        }
+        existingBeer.setVersion(existingBeer.getVersion() + 1);
+        existingBeer.setUpdateDate(LocalDateTime.now());
+        beerMap.put(beerId, existingBeer);
+    }
+    
+    @Override
     public void deleteBeerById(UUID beerId) {
         beerMap.remove(beerId);
     }
