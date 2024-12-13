@@ -1,5 +1,6 @@
 package dsw.springframework.spring6restmvc.controllers;
 
+import com.oracle.svm.core.annotate.Delete;
 import dsw.springframework.spring6restmvc.model.Beer;
 import dsw.springframework.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +43,12 @@ public class BeerController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/beer/" + savedNewBeer.getId().toString());
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+    
+    @DeleteMapping("{beerId}")
+    public ResponseEntity deleteBeerById(@PathVariable("beerId") UUID beerId) {
+        beerService.deleteBeerById(beerId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
     
     @GetMapping

@@ -13,4 +13,6 @@ public interface CustomerService {
     Customer getCustomer(UUID id);
 
     List<Customer> listCustomers();
+
+    void deleteCustomerById(UUID customerId);
 }

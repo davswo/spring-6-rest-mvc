@@ -76,4 +76,9 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> listCustomers() {
         return customers.values().stream().toList();
     }
+    
+    @Override
+    public void deleteCustomerById(UUID customerId) {
+        customers.remove(customerId);
+    }
 }
