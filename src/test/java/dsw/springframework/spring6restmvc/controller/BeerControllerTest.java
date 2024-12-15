@@ -75,19 +75,19 @@ class BeerControllerTest {
 
         System.out.println(objectMapper.writeValueAsBytes(beer));
         System.out.println(objectMapper.writeValueAsString(beer));
-        mockMvc.perform(post("/api/v1/beer")
+        mockMvc.perform(post(BeerController.BEER_PATH)
                         .content(objectMapper.writeValueAsString(beer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/v1/beer/" + id.toString()));
+                .andExpect(header().string("Location", BeerController.BEER_PATH + "/" + id));
     }
 
     @Test
     void testUpdateBeer() throws Exception {
         Beer beer = beerServiceImpl.getAllBeers().get(0);
 
-        mockMvc.perform(put("/api/v1/beer/" + beer.getId())
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
                         .content(objectMapper.writeValueAsString(beer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -102,7 +102,7 @@ class BeerControllerTest {
     void testPatchBeer() throws Exception {
         Beer beer = beerServiceImpl.getAllBeers().get(0);
         
-        mockMvc.perform(patch("/api/v1/beer/" + beer.getId())
+        mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
@@ -117,7 +117,7 @@ class BeerControllerTest {
     void testDeleteBeer() throws Exception {
         Beer beer = beerServiceImpl.getAllBeers().get(0);
 
-        mockMvc.perform(delete("/api/v1/beer/" + beer.getId())
+        mockMvc.perform(delete(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         
@@ -129,7 +129,7 @@ class BeerControllerTest {
     void testGetAllBeers() throws Exception {
         given(beerService.getAllBeers()).willReturn(beerServiceImpl.getAllBeers());
 
-        mockMvc.perform(get("/api/v1/beer")
+        mockMvc.perform(get(BeerController.BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -142,7 +142,7 @@ class BeerControllerTest {
 
         given(beerService.getBeerById(beer.getId())).willReturn(beer);
 
-        mockMvc.perform(get("/api/v1/beer/" + beer.getId())
+        mockMvc.perform(get(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
