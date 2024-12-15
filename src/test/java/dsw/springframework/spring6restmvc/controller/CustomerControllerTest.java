@@ -5,7 +5,9 @@ import dsw.springframework.spring6restmvc.controllers.CustomerController;
 import dsw.springframework.spring6restmvc.model.Customer;
 import dsw.springframework.spring6restmvc.services.CustomerService;
 import dsw.springframework.spring6restmvc.services.CustomerServiceImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -17,8 +19,10 @@ import java.util.UUID;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
@@ -34,7 +38,7 @@ public class CustomerControllerTest {
     CustomerService customerService;
 
     CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
-
+    
     @Test
     void createNewCustomer() throws Exception {
         UUID id = UUID.randomUUID();
@@ -54,13 +58,27 @@ public class CustomerControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/customer/" + id.toString()));
-
-
     }
 
     @Test
+    void testUpdateCustomer() throws Exception {
+        Customer customer = customerServiceImpl.getAllCustomers().get(0);
+
+        mockMvc.perform(put("/api/v1/customer/" + customer.getId())
+                        .content(objectMapper.writeValueAsString(customer))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(customerService).updateCustomer(idCaptor.capture(), any(Customer.class));
+
+        Assertions.assertEquals(customer.getId(), idCaptor.getValue());
+    }
+    
+    @Test
     void listCustomers() throws Exception {
-        given(customerService.listCustomers()).willReturn(customerServiceImpl.listCustomers());
+        given(customerService.getAllCustomers()).willReturn(customerServiceImpl.getAllCustomers());
 
         mockMvc.perform(get("/api/v1/customer")
                         .accept(MediaType.APPLICATION_JSON))
@@ -71,7 +89,7 @@ public class CustomerControllerTest {
 
     @Test
     void getCustomerById() throws Exception {
-        final Customer customer = customerServiceImpl.listCustomers().get(0);
+        final Customer customer = customerServiceImpl.getAllCustomers().get(0);
         given(customerService.getCustomer(customer.getId())).willReturn(customer);
 
         mockMvc.perform(get("/api/v1/customer/" + customer.getId())

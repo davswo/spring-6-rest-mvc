@@ -1,15 +1,12 @@
 package dsw.springframework.spring6restmvc.controllers;
 
-import com.oracle.svm.core.annotate.Delete;
 import dsw.springframework.spring6restmvc.model.Beer;
 import dsw.springframework.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,11 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 @Slf4j
@@ -61,7 +56,7 @@ public class BeerController {
     
     @GetMapping
     public List<Beer> listAllBeers() {
-        return beerService.listBeers();
+        return beerService.getAllBeers();
     }
     
     @GetMapping("{beerId}")

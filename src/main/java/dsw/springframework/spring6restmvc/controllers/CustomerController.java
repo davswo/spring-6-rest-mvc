@@ -58,7 +58,7 @@ public class CustomerController {
     @GetMapping
     public List<Customer> listAllCustomers(){
         log.info("Getting customers");
-        return customerService.listCustomers();
+        return customerService.getAllCustomers();
     }
     
     @GetMapping("{customerId}")

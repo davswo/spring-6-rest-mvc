@@ -87,7 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
-    public List<Customer> listCustomers() {
+    public List<Customer> getAllCustomers() {
         return customers.values().stream().toList();
     }
     
