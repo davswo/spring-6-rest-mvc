@@ -2,7 +2,6 @@ package dsw.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dsw.springframework.spring6restmvc.controllers.CustomerController;
-import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Customer;
 import dsw.springframework.spring6restmvc.services.CustomerService;
 import dsw.springframework.spring6restmvc.services.CustomerServiceImpl;
@@ -146,7 +145,7 @@ public class CustomerControllerTest {
     @Test
     void testGetCustomerByIdNotFound() throws Exception {
 
-        given(customerService.getCustomerById(any(UUID.class))).willThrow(NotFoundException.class);
+        given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, UUID.randomUUID())
                         .accept(MediaType.APPLICATION_JSON))
