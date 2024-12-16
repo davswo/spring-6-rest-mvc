@@ -1,7 +1,6 @@
 package dsw.springframework.spring6restmvc.controllers;
 
 
-import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Customer;
 import dsw.springframework.spring6restmvc.services.CustomerService;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,11 +65,5 @@ public class CustomerController {
     @GetMapping(CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable("customerId") UUID customerId){
         return customerService.getCustomerById(customerId);
-    }
-    
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity handleNotFoundException(Exception ex){
-        log.info(ex.getMessage());
-        return ResponseEntity.notFound().build();
     }
 }
