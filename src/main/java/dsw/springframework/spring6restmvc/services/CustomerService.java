@@ -3,6 +3,7 @@ package dsw.springframework.spring6restmvc.services;
 import dsw.springframework.spring6restmvc.model.Customer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
@@ -12,7 +13,7 @@ public interface CustomerService {
 
     void patchCustomer(UUID id, Customer customer);
 
-    Customer getCustomerById(UUID id);
+    Optional<Customer> getCustomerById(UUID id);
 
     List<Customer> getAllCustomers();
 

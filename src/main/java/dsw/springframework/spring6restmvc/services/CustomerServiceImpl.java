@@ -1,6 +1,5 @@
 package dsw.springframework.spring6restmvc.services;
 
-import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Customer;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -61,7 +61,11 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Override
     public void updateCustomer(UUID customerId, Customer customer) {
-        Customer existingCustomer = getCustomerByIdInternal(customerId);
+        Optional<Customer> customerOpt = getCustomerById(customerId);
+        if (!customerOpt.isPresent()) {
+            return;
+        }
+        Customer existingCustomer = customerOpt.get();
         existingCustomer.setCustomerName(customer.getCustomerName());
         existingCustomer.setVersion(customer.getVersion() + 1);
         existingCustomer.setLastModifiedDate(LocalDateTime.now());
@@ -70,10 +74,11 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Override
     public void patchCustomer(UUID customerId, Customer customer) {
-        Customer existingCustomer = getCustomerByIdInternal(customerId);
-        if (existingCustomer == null) {
+        Optional<Customer> customerOpt = getCustomerById(customerId);
+        if (!customerOpt.isPresent()) {
             return;
         }
+        Customer existingCustomer = customerOpt.get();
         if (customer.getCustomerName() != null) {
             existingCustomer.setCustomerName(customer.getCustomerName());
         }
@@ -83,8 +88,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
-    public Customer getCustomerById(UUID customerId) {
-        return getCustomerByIdInternal(customerId);
+    public Optional<Customer> getCustomerById(UUID customerId) {
+        return Optional.of(customerMap.get(customerId));
     }
     
     @Override
@@ -97,11 +102,4 @@ public class CustomerServiceImpl implements CustomerService {
         customerMap.remove(customerId);
     }
     
-    private Customer getCustomerByIdInternal(UUID customerId) {
-        final Customer customer = customerMap.get(customerId);
-        if (customer == null) {
-            throw new NotFoundException("Customer not found");
-        }
-        return customer;
-    }
 }

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -68,9 +69,9 @@ public class BeerServiceImpl implements BeerService {
     }
     
     @Override
-    public Beer getBeerById(UUID beerId) {
+    public Optional<Beer> getBeerById(UUID beerId) {
         log.debug("Get Beer by Id - in service. Id: " + beerId.toString());
-        return getBeerByIdInternal(beerId);
+        return Optional.of(beerMap.get(beerId));
     }
     
     @Override
@@ -92,7 +93,11 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public void updateBeerById(UUID beerId, Beer beer) {
-        Beer existingBeer = getBeerByIdInternal(beerId);
+        Optional<Beer> beerOpt = getBeerById(beerId);
+        if (!beerOpt.isPresent()) {
+            return;
+        }
+        Beer existingBeer = beerOpt.get();
         existingBeer.setBeerName(beer.getBeerName());
         existingBeer.setBeerStyle(beer.getBeerStyle());
         existingBeer.setUpc(beer.getUpc());
@@ -104,10 +109,11 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public void patchBeerById(UUID beerId, Beer beer) {
-        Beer existingBeer = getBeerByIdInternal(beerId);
-        if (existingBeer == null) {
+        Optional<Beer> beerOpt = getBeerById(beerId);
+        if (!beerOpt.isPresent()) {
             return;
         }
+        Beer existingBeer = beerOpt.get();
         if (beer.getBeerName() != null) {
             existingBeer.setBeerName(beer.getBeerName());
         }
@@ -131,14 +137,6 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public void deleteBeerById(UUID beerId) {
         beerMap.remove(beerId);
-    }
-    
-    private Beer getBeerByIdInternal(UUID beerId) {
-        final Beer beer = beerMap.get(beerId);
-        if (beer == null) {
-            throw new RuntimeException("Beer not found");
-        }
-        return beer;
     }
         
 }

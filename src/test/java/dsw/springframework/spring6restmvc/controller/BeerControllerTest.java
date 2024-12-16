@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -141,7 +142,7 @@ class BeerControllerTest {
     void testGetBeerById() throws Exception {
         Beer beer = beerServiceImpl.getAllBeers().get(0);
 
-        given(beerService.getBeerById(beer.getId())).willReturn(beer);
+        given(beerService.getBeerById(beer.getId())).willReturn(Optional.of(beer));
 
         mockMvc.perform(get(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
