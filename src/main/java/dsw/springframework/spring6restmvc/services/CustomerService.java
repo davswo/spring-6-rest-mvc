@@ -12,7 +12,7 @@ public interface CustomerService {
 
     void patchCustomer(UUID id, Customer customer);
 
-    Customer getCustomer(UUID id);
+    Customer getCustomerById(UUID id);
 
     List<Customer> getAllCustomers();
 

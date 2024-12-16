@@ -1,5 +1,6 @@
 package dsw.springframework.spring6restmvc.controllers;
 
+import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Beer;
 import dsw.springframework.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,6 +66,12 @@ public class BeerController {
     public Beer getBeerById(@PathVariable("beerId") UUID beerId){
         log.debug("Get Beer by Id - in controller");
         return beerService.getBeerById(beerId);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity handleNotFoundException(Exception ex){
+        log.info(ex.getMessage());
+        return ResponseEntity.notFound().build();
     }
 
 }

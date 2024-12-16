@@ -2,6 +2,7 @@ package dsw.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dsw.springframework.spring6restmvc.controllers.CustomerController;
+import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Customer;
 import dsw.springframework.spring6restmvc.services.CustomerService;
 import dsw.springframework.spring6restmvc.services.CustomerServiceImpl;
@@ -130,7 +131,7 @@ public class CustomerControllerTest {
     @Test
     void TestGetCustomerById() throws Exception {
         final Customer customer = customerServiceImpl.getAllCustomers().get(0);
-        given(customerService.getCustomer(customer.getId())).willReturn(customer);
+        given(customerService.getCustomerById(customer.getId())).willReturn(customer);
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -139,6 +140,16 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("$.id", is(customer.getId().toString())))
                 .andExpect(jsonPath("$.customerName", is(customer.getCustomerName())));
 
+    }
+
+    @Test
+    void testGetCustomerByIdNotFound() throws Exception {
+
+        given(customerService.getCustomerById(any(UUID.class))).willThrow(NotFoundException.class);
+
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 }

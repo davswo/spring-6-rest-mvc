@@ -2,6 +2,7 @@ package dsw.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dsw.springframework.spring6restmvc.controllers.BeerController;
+import dsw.springframework.spring6restmvc.exceptions.NotFoundException;
 import dsw.springframework.spring6restmvc.model.Beer;
 import dsw.springframework.spring6restmvc.model.BeerStyle;
 import dsw.springframework.spring6restmvc.services.BeerService;
@@ -149,4 +150,15 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.id", is(beer.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is(beer.getBeerName())));
     }
+    
+    @Test
+    void testGetBeerByIdNotFound() throws Exception {
+
+        given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+
+        mockMvc.perform(get(BeerController.BEER_PATH_ID, UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))   
+                .andExpect(status().isNotFound());
+    }
+    
 }

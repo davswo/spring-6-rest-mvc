@@ -68,9 +68,9 @@ public class BeerServiceImpl implements BeerService {
     }
     
     @Override
-    public Beer getBeerById(UUID id) {
-        log.debug("Get Beer by Id - in service. Id: " + id.toString());
-        return beerMap.get(id);
+    public Beer getBeerById(UUID beerId) {
+        log.debug("Get Beer by Id - in service. Id: " + beerId.toString());
+        return getBeerByIdInternal(beerId);
     }
     
     @Override
@@ -92,7 +92,7 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public void updateBeerById(UUID beerId, Beer beer) {
-        Beer existingBeer = beerMap.get(beerId);
+        Beer existingBeer = getBeerByIdInternal(beerId);
         existingBeer.setBeerName(beer.getBeerName());
         existingBeer.setBeerStyle(beer.getBeerStyle());
         existingBeer.setUpc(beer.getUpc());
@@ -104,7 +104,7 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public void patchBeerById(UUID beerId, Beer beer) {
-        Beer existingBeer = beerMap.get(beerId);
+        Beer existingBeer = getBeerByIdInternal(beerId);
         if (existingBeer == null) {
             return;
         }
@@ -131,6 +131,14 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public void deleteBeerById(UUID beerId) {
         beerMap.remove(beerId);
+    }
+    
+    private Beer getBeerByIdInternal(UUID beerId) {
+        final Beer beer = beerMap.get(beerId);
+        if (beer == null) {
+            throw new RuntimeException("Beer not found");
+        }
+        return beer;
     }
         
 }
