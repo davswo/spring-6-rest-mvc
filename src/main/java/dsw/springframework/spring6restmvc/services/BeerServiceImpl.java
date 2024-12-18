@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -41,19 +42,21 @@ public class BeerServiceImpl implements BeerService {
     }
     
     @Override
-    public void updateBeerById(UUID beerId, BeerDTO beer) {
-        Optional<Beer> beerOpt = beerRepository.findById(beerId);
-        if (!beerOpt.isPresent()) {
-            return;
-        }
-        Beer existingBeer = beerOpt.get();
-        existingBeer.setBeerName(beer.getBeerName());
-        existingBeer.setBeerStyle(beer.getBeerStyle());
-        existingBeer.setUpc(beer.getUpc());
-        existingBeer.setPrice(beer.getPrice());
-        existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
-        existingBeer.setUpdateDate(LocalDateTime.now());
-        beerRepository.save(existingBeer);
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>(getBeerById(beerId));
+        
+        beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
+            foundBeer.setBeerName(beer.getBeerName());
+            foundBeer.setBeerStyle(beer.getBeerStyle());
+            foundBeer.setUpc(beer.getUpc());
+            foundBeer.setPrice(beer.getPrice());
+            foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            foundBeer.setUpdateDate(LocalDateTime.now());
+            atomicReference.set(Optional.of(beerMapper.beerToBeerDto(beerRepository.save(foundBeer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+        return atomicReference.get();
     }
     
     @Override
