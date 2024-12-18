@@ -29,11 +29,7 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public Optional<BeerDTO> getBeerById(UUID beerId) {
         log.debug("Get Beer by Id - in service. Id: " + beerId.toString());
-        final Optional<Beer> beerByIdOpt = beerRepository.findById(beerId);
-        if (beerByIdOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(beerMapper.beerToBeerDto(beerByIdOpt.get()));
+        return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
     }
     
     @Override

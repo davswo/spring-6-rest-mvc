@@ -56,11 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Override
     public Optional<CustomerDTO> getCustomerById(UUID customerId) {
-        final Optional<Customer> customerByIdOpt = customerRepository.findById(customerId);
-        if (customerByIdOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(customerMapper.customerToCustomerDto(customerByIdOpt.get()));
+        return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(customerId).orElse(null)));
     }
     
     @Override
