@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -103,6 +104,19 @@ class BeerControllerTest {
         verify(beerService).updateBeerById(idCaptor.capture(), any(BeerDTO.class));
 
         assertThat(beer1.getId()).isEqualTo(idCaptor.getValue());
+    }
+
+    @Test
+    void testCreateBeerNullBeerName() throws Exception {
+
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest()).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
     
     @Test
