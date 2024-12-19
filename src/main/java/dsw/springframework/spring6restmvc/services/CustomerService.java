@@ -9,9 +9,9 @@ import java.util.UUID;
 public interface CustomerService {
     CustomerDTO saveNewCustomer(CustomerDTO customer);
 
-    void updateCustomer(UUID id, CustomerDTO customer);
+    Optional<CustomerDTO> updateCustomer(UUID id, CustomerDTO customer);
 
-    void patchCustomer(UUID id, CustomerDTO customer);
+    Optional<CustomerDTO> patchCustomer(UUID id, CustomerDTO customer);
 
     Optional<CustomerDTO> getCustomerById(UUID id);
 

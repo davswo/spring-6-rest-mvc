@@ -121,7 +121,9 @@ class BeerControllerTest {
     
     @Test
     void testPatchBeer() throws Exception {
-  
+        
+        given(beerService.patchBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(beer1));
+        
         mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beer1)))

@@ -18,21 +18,21 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 @AllArgsConstructor
 public class BeerServiceImpl implements BeerService {
-    
+
     private BeerRepository beerRepository;
     private BeerMapper beerMapper;
-    
+
     @Override
     public List<BeerDTO> getAllBeers() {
         return beerRepository.findAll().stream().map(beerMapper::beerToBeerDto).toList();
     }
-    
+
     @Override
     public Optional<BeerDTO> getBeerById(UUID beerId) {
         log.debug("Get Beer by Id - in service. Id: " + beerId.toString());
         return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
     }
-    
+
     @Override
     public BeerDTO saveNewBeer(BeerDTO beer) {
         beer.setCreatedDate(LocalDateTime.now());
@@ -40,11 +40,11 @@ public class BeerServiceImpl implements BeerService {
         final Beer newBeer = beerRepository.save(beerMapper.beerDtoToBeer(beer));
         return beerMapper.beerToBeerDto(newBeer);
     }
-    
+
     @Override
     public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
-        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>(getBeerById(beerId));
-        
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
+
         beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
             foundBeer.setBeerName(beer.getBeerName());
             foundBeer.setBeerStyle(beer.getBeerStyle());
@@ -58,10 +58,12 @@ public class BeerServiceImpl implements BeerService {
         });
         return atomicReference.get();
     }
-    
+
     @Override
-    public void patchBeerById(UUID beerId, BeerDTO beer) {
-        beerRepository.findById(beerId).ifPresent(existingBeer -> {
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
+
+        beerRepository.findById(beerId).ifPresentOrElse(existingBeer -> {
             if (beer.getBeerName() != null) {
                 existingBeer.setBeerName(beer.getBeerName());
             }
@@ -80,12 +82,16 @@ public class BeerServiceImpl implements BeerService {
             existingBeer.setVersion(existingBeer.getVersion() + 1);
             existingBeer.setUpdateDate(LocalDateTime.now());
             beerRepository.save(existingBeer);
+            atomicReference.set(Optional.of(beerMapper.beerToBeerDto(existingBeer)));
+        }, () -> {
+            atomicReference.set(Optional.empty());
         });
+        return atomicReference.get();
     }
-    
+
     @Override
     public void deleteBeerById(UUID beerId) {
         beerRepository.deleteById(beerId);
     }
-        
+
 }

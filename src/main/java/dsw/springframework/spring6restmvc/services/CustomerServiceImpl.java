@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
@@ -29,24 +30,33 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
-    public void updateCustomer(UUID customerId, CustomerDTO customer) {
-        customerRepository.findById(customerId).ifPresent(existingCustomer -> {
+    public Optional<CustomerDTO> updateCustomer(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
+        customerRepository.findById(customerId).ifPresentOrElse(existingCustomer -> {
             existingCustomer.setCustomerName(customer.getCustomerName());
             existingCustomer.setLastModifiedDate(LocalDateTime.now());
             customerRepository.save(existingCustomer);
+            atomicReference.set(Optional.of(customerMapper.customerToCustomerDto(existingCustomer)));
+        }, () -> {
+            atomicReference.set(Optional.empty());
         });
+        return atomicReference.get();
     }
     
     @Override
-    public void patchCustomer(UUID customerId, CustomerDTO customer) {
-        customerRepository.findById(customerId).ifPresent(existingCustomer -> {
+    public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
+        customerRepository.findById(customerId).ifPresentOrElse(existingCustomer -> {
             if (customer.getCustomerName() != null) {
                 existingCustomer.setCustomerName(customer.getCustomerName());
             }
             existingCustomer.setLastModifiedDate(LocalDateTime.now());
             customerRepository.save(existingCustomer);
+            atomicReference.set(Optional.of(customerMapper.customerToCustomerDto(existingCustomer)));
+        }, () -> {
+            atomicReference.set(Optional.empty());
         });
-        
+        return atomicReference.get();
     }
     
     @Override

@@ -86,6 +86,8 @@ public class CustomerControllerTest {
     @Test
     void testUpdateCustomer() throws Exception {
 
+        given(customerService.updateCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customer1));
+        
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customer1.getId())
                         .content(objectMapper.writeValueAsString(customer1))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,6 +102,9 @@ public class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
+        
+        given(customerService.patchCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customer1));
+        
         mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customer1.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer1)))

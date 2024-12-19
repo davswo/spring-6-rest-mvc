@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -33,13 +34,19 @@ public class CustomerController {
     
     @PatchMapping(CUSTOMER_PATH_ID)
     public ResponseEntity patchCustomerById(@PathVariable("customerId") UUID customerId, @RequestBody CustomerDTO customer){
-        customerService.patchCustomer(customerId, customer);
+        final Optional<CustomerDTO> customerDTO = customerService.patchCustomer(customerId, customer);
+        if (customerDTO.isEmpty()){
+            throw new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
     
     @PutMapping(CUSTOMER_PATH_ID)
     public ResponseEntity updateCustomer(@PathVariable("customerId") UUID customerId, @RequestBody CustomerDTO customer){
-        customerService.updateCustomer(customerId, customer);
+        final Optional<CustomerDTO> customerDTO = customerService.updateCustomer(customerId, customer);
+        if (customerDTO.isEmpty()){
+            throw new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
     
