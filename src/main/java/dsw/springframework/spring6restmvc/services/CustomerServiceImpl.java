@@ -30,28 +30,23 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Override
     public void updateCustomer(UUID customerId, CustomerDTO customer) {
-        Optional<Customer> customerOpt = customerRepository.findById(customerId);
-        if (!customerOpt.isPresent()) {
-            return;
-        }
-        Customer existingCustomer = customerOpt.get();
-        existingCustomer.setCustomerName(customer.getCustomerName());
-        existingCustomer.setLastModifiedDate(LocalDateTime.now());
-        customerRepository.save(existingCustomer);
+        customerRepository.findById(customerId).ifPresent(existingCustomer -> {
+            existingCustomer.setCustomerName(customer.getCustomerName());
+            existingCustomer.setLastModifiedDate(LocalDateTime.now());
+            customerRepository.save(existingCustomer);
+        });
     }
     
     @Override
     public void patchCustomer(UUID customerId, CustomerDTO customer) {
-        Optional<Customer> customerOpt = customerRepository.findById(customerId);
-        if (!customerOpt.isPresent()) {
-            return;
-        }
-        Customer existingCustomer = customerOpt.get();
-        if (customer.getCustomerName() != null) {
-            existingCustomer.setCustomerName(customer.getCustomerName());
-        }
-        existingCustomer.setLastModifiedDate(LocalDateTime.now());
-        customerRepository.save(existingCustomer);
+        customerRepository.findById(customerId).ifPresent(existingCustomer -> {
+            if (customer.getCustomerName() != null) {
+                existingCustomer.setCustomerName(customer.getCustomerName());
+            }
+            existingCustomer.setLastModifiedDate(LocalDateTime.now());
+            customerRepository.save(existingCustomer);
+        });
+        
     }
     
     @Override

@@ -61,29 +61,26 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     public void patchBeerById(UUID beerId, BeerDTO beer) {
-        Optional<Beer> beerOpt = beerRepository.findById(beerId);
-        if (!beerOpt.isPresent()) {
-            return;
-        }
-        Beer existingBeer = beerOpt.get();
-        if (beer.getBeerName() != null) {
-            existingBeer.setBeerName(beer.getBeerName());
-        }
-        if (beer.getBeerStyle() != null) {
-            existingBeer.setBeerStyle(beer.getBeerStyle());
-        }
-        if (beer.getUpc() != null) {
-            existingBeer.setUpc(beer.getUpc());
-        }
-        if (beer.getPrice() != null) {
-            existingBeer.setPrice(beer.getPrice());
-        }
-        if (beer.getQuantityOnHand() != null) {
-            existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
-        }
-        existingBeer.setVersion(existingBeer.getVersion() + 1);
-        existingBeer.setUpdateDate(LocalDateTime.now());
-        beerRepository.save(existingBeer);
+        beerRepository.findById(beerId).ifPresent(existingBeer -> {
+            if (beer.getBeerName() != null) {
+                existingBeer.setBeerName(beer.getBeerName());
+            }
+            if (beer.getBeerStyle() != null) {
+                existingBeer.setBeerStyle(beer.getBeerStyle());
+            }
+            if (beer.getUpc() != null) {
+                existingBeer.setUpc(beer.getUpc());
+            }
+            if (beer.getPrice() != null) {
+                existingBeer.setPrice(beer.getPrice());
+            }
+            if (beer.getQuantityOnHand() != null) {
+                existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            }
+            existingBeer.setVersion(existingBeer.getVersion() + 1);
+            existingBeer.setUpdateDate(LocalDateTime.now());
+            beerRepository.save(existingBeer);
+        });
     }
     
     @Override
