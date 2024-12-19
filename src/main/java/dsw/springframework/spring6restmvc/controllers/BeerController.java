@@ -33,7 +33,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beer) {
+    public ResponseEntity patchBeerById(@PathVariable("beerId") UUID beerId, @Validated @RequestBody BeerDTO beer) {
         final Optional<BeerDTO> beerDTO = beerService.patchBeerById(beerId, beer);
         if (beerDTO.isEmpty()) {
             throw new NotFoundException();

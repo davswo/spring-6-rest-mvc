@@ -60,9 +60,21 @@ class BeerControllerTest {
 
     @BeforeEach
     void setUp() {
-        beer1 = BeerDTO.builder().id(UUID.randomUUID()).beerName("Beer 1").build();
-        beer2 = BeerDTO.builder().id(UUID.randomUUID()).beerName("Beer 2").build();
-        beer3 = BeerDTO.builder().id(UUID.randomUUID()).beerName("Beer 3").build();
+        beer1 = BeerDTO.builder().id(UUID.randomUUID())
+                .beerName("Beer 1")
+                .upc("1")
+                .price(BigDecimal.valueOf(1.1))
+                .beerStyle(BeerStyle.HELLES).build();
+        beer2 = BeerDTO.builder().id(UUID.randomUUID())
+                .beerName("Beer 2")
+                .upc("2")
+                .price(BigDecimal.valueOf(2.2))
+                .beerStyle(BeerStyle.DUNKEL).build();
+        beer3 = BeerDTO.builder().id(UUID.randomUUID())
+                .beerName("Beer 3")
+                .upc("3")
+                .price(BigDecimal.valueOf(3.3))
+                .beerStyle(BeerStyle.ALE).build();
         given(beerService.getAllBeers()).willReturn(List.of(beer1, beer2, beer3));
     }
 
@@ -107,7 +119,22 @@ class BeerControllerTest {
     }
 
     @Test
-    void testCreateBeerNullBeerName() throws Exception {
+    void testUpdateBeerEmptyAttributes() throws Exception {
+
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        MvcResult mvcResult = mockMvc.perform(put(BeerController.BEER_PATH_ID, beer1.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testCreateBeerEmptyAttributes() throws Exception {
 
         BeerDTO beerDTO = BeerDTO.builder().build();
 
@@ -115,7 +142,9 @@ class BeerControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
-                .andExpect(status().isBadRequest()).andReturn();
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
     
